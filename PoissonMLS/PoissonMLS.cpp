@@ -248,14 +248,10 @@ MStatus MLSDeformerNode::deform( MDataBlock& data, MItGeometry& itGeo, const MMa
                 }
             }
         }
-        bool normaliseWeight = data.inputValue( aNormaliseWeight ).asBool();
+        // normalise weights
+        short normaliseWeightMode = data.inputValue( aNormaliseWeight ).asShort();
         for(int j=0;j<num;j++){
-            double sum = std::accumulate(w[j].begin(), w[j].end(), 0.0);
-            if ( (sum > 1 || normaliseWeight) && sum>0){
-                for (int i = 0; i < numPrb; i++){
-                    w[j][i] /= sum;
-                }
-            }
+            D.normaliseWeight(normaliseWeightMode, w[j]);
         }
         
         // MLS precomputation
@@ -300,13 +296,13 @@ MStatus MLSDeformerNode::deform( MDataBlock& data, MItGeometry& itGeo, const MMa
         JacobiSVD<Matrix3d> svd(p[j]*q.transpose(), ComputeFullU | ComputeFullV);
         M = PPI[j] * (p[j]*q.transpose());
         Matrix3d sgn = Matrix3d::Identity();
-        if(M.determinant()<0){
+        if(M.determinant()<0 && (MLSMode & MLS_POSITIVE_DET)){
             sgn(2,2) = -1;
         }
-        if(MLSMode == MLS_SIM){
+        if(MLSMode & MLS_SIM){
             M = svd.matrixU() * sgn * svd.matrixV().transpose();
             M *= svd.singularValues().sum()/trPP[j];
-        }else if(MLSMode == MLS_RIGID){
+        }else if(MLSMode & MLS_RIGID){
             M = svd.matrixU() * sgn * svd.matrixV().transpose();
         }
         A[j] = pad(M, center-icenter[j]);
@@ -388,8 +384,10 @@ MStatus MLSDeformerNode::initialize(){
     addAttribute( aRecompARAP );
     
     
-    aMLSMode = eAttr.create( "MLSMode", "mlsm", MLS_RIGID );
+    aMLSMode = eAttr.create( "MLSMode", "mlsm", MLS_RIGID + MLS_POSITIVE_DET );
     eAttr.addField( "MLS-AFF", MLS_AFF );
+    eAttr.addField( "MLS-SIM(positive)", MLS_SIM + MLS_POSITIVE_DET );
+    eAttr.addField( "MLS-RIGID(positive)", MLS_RIGID + MLS_POSITIVE_DET );
     eAttr.addField( "MLS-SIM", MLS_SIM );
     eAttr.addField( "MLS-RIGID", MLS_RIGID );
     eAttr.addField( "OFF", MLS_OFF );
@@ -397,8 +395,11 @@ MStatus MLSDeformerNode::initialize(){
     attributeAffects( aMLSMode, outputGeom );
     attributeAffects( aMLSMode, aRecompMLS );
     
-    aNormaliseWeight = nAttr.create( "normaliseWeight", "nw", MFnNumericData::kBoolean, true );
-    nAttr.setStorable(true);
+    aNormaliseWeight = eAttr.create( "normaliseWeight", "nw", NM_LINEAR );
+    eAttr.addField( "NONE", NM_NONE );
+    eAttr.addField( "Linear",  NM_LINEAR );
+    eAttr.addField( "Softmax", NM_SOFTMAX );
+    eAttr.setStorable(true);
     addAttribute( aNormaliseWeight );
     attributeAffects( aNormaliseWeight, outputGeom );
     attributeAffects( aNormaliseWeight, aRecompMLS );

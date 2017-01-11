@@ -19,7 +19,8 @@ http://skaji.org/files/MEIS2016-MLS.pdf
 
 
 ## How to compile:
-- Mac OS X: Look at the included Xcode project file
+- Mac OS: Look at the included Xcode project file
+- Windows: Look at the included Visual Studio project. __DO NOT__ turn on AVX instructions.
 - Other: Look at the included Makefile
 
 ## How to use:
@@ -27,8 +28,10 @@ http://skaji.org/files/MEIS2016-MLS.pdf
 - put the UI python script in "MAYA_SCRIPT_PATH"
 - open script editor in Maya and type in the following Python command:
 
-    import ui_PoissonMLS as ui
-    ui.UI_PoissonMLS()
+```python
+import ui_PoissonMLS as ui
+ui.UI_PoissonMLS()
+```
 
 - Select multiple objects which you would like to make control points.
 - While holding the shift key, select the target mesh to be deformed.
