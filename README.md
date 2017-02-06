@@ -22,6 +22,8 @@ http://skaji.org/files/MEIS2016-MLS.pdf
 - Mac OS: Look at the included Xcode project file
 - Windows: Look at the included Visual Studio project. __DO NOT__ turn on AVX instructions.
 - Other: Look at the included Makefile
+- on some systems, specifying the compiler option -DEIGEN_DONT_VECTORIZE may be necessary to avoid compilation errors (thank giordi91 for this information)
+
 
 ## How to use:
 - put the plugins in "MAYA_PLUG_IN_PATH"
