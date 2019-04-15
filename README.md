@@ -15,7 +15,7 @@ This is a deformer plugin based on the Moving Least Square deformation
 and the Poisson mesh editing techniques.
 The algorithm is presented at MEIS2016:
 
-http://skaji.org/files/MEIS2016-MLS.pdf
+http://www.skaji.org/files/MEIS2016-MLS.pdf
 
 
 ## How to compile:
