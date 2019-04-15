@@ -110,7 +110,7 @@ MStatus MLSDeformerNode::deform( MDataBlock& data, MItGeometry& itGeo, const MMa
     }
     
     
-    // MLS without Poisson
+    // recompute weights
     if(!data.isClean(aRecompMLS) || isNumProbeChanged){
         
         // load weghts of ctl points

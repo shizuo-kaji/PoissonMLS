@@ -19,6 +19,7 @@ http://skaji.org/files/MEIS2016-MLS.pdf
 
 
 ## How to compile:
+- Get devkit at https://www.autodesk.com/developmaya
 - Mac OS: Look at the included Xcode project file
 - Windows: Look at the included Visual Studio project. __DO NOT__ turn on AVX instructions.
 - Other: Look at the included Makefile
